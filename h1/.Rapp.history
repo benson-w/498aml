@@ -1,0 +1,65 @@
+hi
+source("/Users/benson/Projects/498aml")
+d = read.table("test.txt", sep=",")
+ls
+d = read.table("test.txt", sep=",")
+source("/Users/benson/Projects/498aml")
+d = read.table("test.txt", sep=",")listfiles()
+listfiles()
+list.files()
+setwd(Projects/498aml)
+setwd("Projects/498aml")
+list.files()
+d = read.table("test.txt", sep=",")
+d
+k = mean(d)
+k
+mean(1,2,3)
+mean(1,2,3,4,5)
+d = read.table("pima-indians-diabetes.data.txt", sep=",")
+d
+rowMeans(d[-1])
+columnMeans(d[-1])
+colMeans(d[-1])
+mean(d)
+mean(d[])
+d[1]
+mean[2]
+d[2]
+mean[3]
+d[0]
+d[-1]
+d[-1][1]
+d[-1][0][0]
+d[-1][1][1]
+d[-1][1]
+d[-1][1][0]
+d[-1][1][2]
+td = t(d)
+td
+d
+setwd(dir)
+list.dir()
+list.files()
+package(carat)
+package("carat")
+install.packages("carat")
+install.packages('caret')
+install.packages('e1071', dependencies = TRUE)
+library(class)
+library(e1071)
+summary(d)
+?naiveBayes
+nb = naiveBayes(Class.variable ~ ., data=d)
+setwd('~/Projects/498aml/h1')#
+wdat<-read.csv('pima-indians-diabetes.data.txt', header=FALSE)#
+library(klaR)#
+library(caret)#
+bigx<-wdat[,-c(9)]#
+bigy<-as.factor(wdat[,9])#
+wtd<-createDataPartition(y=bigy, p=.8, list=FALSE)#
+trax<-bigx[wtd,]#
+tray<-bigy[wtd]#
+model<-train(trax, tray, 'nb', trControl=trainControl(method='cv', number=10))#
+teclasses<-predict(model,newdata=bigx[-wtd,])#
+confusionMatrix(data=teclasses, bigy[-wtd])
