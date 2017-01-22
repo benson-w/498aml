@@ -1,1 +1,12 @@
-# http://machinelearningmastery.com/how-to-estimate-model-accuracy-in-r-using-the-caret-package/
+wdat<-read.csv('pima-indians-diabetes.data.txt', header=FALSE)
+library(klaR)
+library(caret)
+
+bigx<-wdat[,-c(9)]
+bigy<-as.factor(wdat[,9])
+wtd<-createDataPartition(y=bigy, p=.8, list=FALSE)
+trax<-bigx[wtd,]
+tray<-bigy[wtd]
+model<-train(trax, tray, 'nb', trControl=trainControl(method='cv', number=10))
+teclasses<-predict(model,newdata=bigx[-wtd,])
+print(confusionMatrix(data=teclasses, bigy[-wtd]))

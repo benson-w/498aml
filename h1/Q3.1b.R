@@ -1,35 +1,51 @@
 library(caret)
+
+# Read data from csv, separate data into trait values as x matrix and label values as y_value
 data<-read.csv('pima-indians-diabetes.data.txt', header=FALSE)
-x_matrix<-data[,-c(9)] # negative sign leaves everything except for the 9th column
-y_value<-data[,9] # only leaves 9th column
+x_matrix<-data[,-c(9)] 
+y_value<-data[,9]
+
+# Arrays to store score for each of the 100 trials
 training_score<-array(dim=100)
 testing_score<-array(dim=100)
-for (i in c(3,4,6,8)) { # columns of which, if it's a 0, make it in to NA
+
+# For columns 3,4,6,8, replace values of 0s with NA
+for (i in c(3,4,6,8)) { 
   has_zero_index <- x_matrix[, i]==0
   x_matrix[has_zero_index, i]=NA
 }
-for (wi in 1:1000) {
+
+# Run many times for cross-validation
+for (wi in 1:100) {
+  
+  # Create a random test partition with 80 percent of the data
   x_test_index<-createDataPartition(y=y_value, p=.8, list=FALSE)
+  
+  # Using the partition created, for 
   train_x_samples <- x_matrix[x_test_index, ]
-  train_y_samples <- y_value[x_test_index] # is y positive? 
-  training_pos_flag <- train_y_samples > 0
+  train_y_samples <- y_value[x_test_index]
+  training_pos_flag <- train_y_samples > 0 # Is y positive
+  
   # select positive and negative samples
   positive_training_samples <- train_x_samples[training_pos_flag, ]
   negative_training_samples<-train_x_samples[!training_pos_flag,]
   x_test_data<-x_matrix[-x_test_index, ]
   y_test_data<-y_value[-x_test_index]
-  # na.rm true to detect unknown values
+  
+  # na.rm to take account of the NA parameters when calculating means and standard deviations
   # calculate mean and standard deviation of training data
   positive_training_mean<-sapply(positive_training_samples, mean, na.rm=TRUE)
   negative_training_mean<-sapply(negative_training_samples, mean, na.rm=TRUE)
   positive_training_sd<-sapply(positive_training_samples, sd, na.rm=TRUE)
   negative_training_sd<-sapply(negative_training_samples, sd, na.rm=TRUE)
-  # compute the distance from sample points to data, positive training samples
+  
+  # For positive labels, look at the training data and compute the error or distance from the normal distribution
   p_sample_mean_dif<-t(t(train_x_samples)-positive_training_mean)
   p_dif_over_sd<-t(t(p_sample_mean_dif)/positive_training_sd)
   positive_training_cost_sum<--(1/2)*rowSums(apply(p_dif_over_sd,c(1, 2), function(x)x^2), na.rm=TRUE)-sum(log(positive_training_sd))
   positive_training_cost_sum<-positive_training_cost_sum # + log(221/615)
-  # same thing but for negative samples
+  
+  # For negative labels, look at the training data and compute the error or distance from the normal distribution
   n_sample_mean_dif<-t(t(train_x_samples)-negative_training_mean)
   n_dif_over_sd<-t(t(n_sample_mean_dif)/negative_training_sd)
   negative_training_cost_sum<--(1/2)*rowSums(apply(n_dif_over_sd,c(1, 2), function(x)x^2), na.rm=TRUE)-sum(log(negative_training_sd))
@@ -53,8 +69,9 @@ for (wi in 1:1000) {
   testing_score[wi]<-sum(gotright)/(sum(gotright)+sum(!gotright))
 }
 
-cat("Average training correct rate over 1000 trials:")
+# Run multiple experiments, print out training correct rate and testing correct rate
+cat("Average training correct rate over 100 trials:")
 print(mean(training_score))
-cat("\nAverage testing correct rate over 1000 trials:")
+cat("\nAverage testing correct rate over 100 trials:")
 print(mean(testing_score))
 cat("\n")
