@@ -50,19 +50,24 @@ for (wi in 1:100) {
   n_dif_over_sd<-t(t(n_sample_mean_dif)/negative_training_sd)
   negative_training_cost_sum<--(1/2)*rowSums(apply(n_dif_over_sd,c(1, 2), function(x)x^2), na.rm=TRUE)-sum(log(negative_training_sd))
   negative_training_cost_sum<-negative_training_cost_sum # + log(221/615)
-  # compare if one side is bigger than the other side
+  
+  # Get the list of data where positive_training is larger
   positive_flag <- positive_training_cost_sum > negative_training_cost_sum
   gotrighttr <- positive_flag==train_y_samples
+
   # calculate error rate
   training_score[wi]<-sum(gotrighttr)/(sum(gotrighttr)+sum(!gotrighttr))
+
   # use trained data to find test error rates, positive
   p_test_mean_dif<-t(t(x_test_data)-positive_training_mean)
   p_test_over_sd<-t(t(p_test_mean_dif)/positive_training_sd)
   positive_testing_error_cost<--(1/2)*rowSums(apply(p_test_over_sd,c(1, 2), function(x)x^2), na.rm=TRUE)-sum(log(positive_training_sd))
+  
   # use trained data to find test error rates, positive
   n_test_mean_dif<-t(t(x_test_data)-negative_training_mean)
   n_test_over_sd<-t(t(n_test_mean_dif)/negative_training_sd)
   negative_testing_error_cost<--(1/2)*rowSums(apply(n_test_over_sd,c(1, 2), function(x)x^2), na.rm=TRUE)-sum(log(negative_training_sd))
+  
   # Calculate error rate of the testing data
   correct_testing_indices<-positive_testing_error_cost>negative_testing_error_cost
   gotright<-correct_testing_indices==y_test_data

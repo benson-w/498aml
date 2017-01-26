@@ -1,3 +1,4 @@
+# Load the data
 Data<-read.csv('processed.cleveland.data.txt', header=FALSE)
 library(klaR)
 library(caret)
